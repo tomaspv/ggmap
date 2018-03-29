@@ -1,0 +1,89 @@
+---
+title: "Ejercicio ggmap"
+output: html_notebook
+---
+
+```{r}
+install.packages("ggmap")
+install.packages("tibble")
+library(ggmap)
+library(tibble)
+
+#########################################################################################################################################################################
+#Obtengo las coordenadas de todas las localidades de caba para ubicarlas en el mapa.
+
+#source: http://www.sharpsightlabs.com/blog/basic-maps-ggmap/
+
+
+#Creamos el df con las localidades
+df.localidades.caba <-tibble(localidad = c("Agronomia",
+                        "Almagro",
+                        "Balvanera",
+                        "Barracas",
+                        "Belgrano",
+                        "Boedo",
+                        "Caballito",
+                        "Chacarita",
+                        "Coghlan",
+                        "Colegiales",
+                        "Constitución",
+                        "Flores",
+                        "Floresta",
+                        "La Boca",
+                        "La Paternal",
+                        "Liniers",
+                        "Mataderos",
+                        "Monte Castro",
+                        "Monserrat",
+                        "Nueva Pompeya",
+                        "Nunez",
+                        "Palermo",
+                        "Parque Avellaneda",
+                        "Parque Chacabuco",
+                        "Parque Chas",
+                        "Parque Patricios",
+                        "Puerto Madero",
+                        "Recoleta",
+                        "Retiro",
+                        "Saavedra",
+                        "San Cristobal",
+                        "San Nicolas",
+                        "San Telmo",
+                        "Velez Sársfield",
+                        "Versalles",
+                        "Villa Crespo",
+                        "Villa del Parque",
+                        "Villa Devoto",
+                        "Villa General Mitre",
+                        "Villa Lugano",
+                        "Villa Luro",
+                        "Villa Ortuzar",
+                        "Villa Pueyrredon",
+                        "Villa Real",
+                        "Villa Riachuelo",
+                        "Villa Santa Rita",
+                        "Villa Soldati",
+                        "Villa Urquiza"))
+
+#Obtenemos las geolocalizaciones
+geo.localidades.caba <- geocode(df.localidades.caba$localidad)
+
+#Combinamos las localidades con sus coordenadas
+df.localidades.con.coord <- cbind(df.localidades.caba, geo.localidades.caba)
+
+#PLOT
+#Utilizamos get_map() para recuperar el mapa de google maps. Para ello le debemos indicar el nombre de la locacion.
+map.bsas <- get_map("CABA Ciudad Autonoma de Buenos Aires", source = "google", filename = "Mapa.jpg")
+#Utilizamos ggmap() para graficar el mapa.
+ggmap(map.bsas, extent = "normal")
+
+
+#Ploteamos buenos aires con sus respectivas localidades
+map.plot.con.localidades <- ggmap(map.bsas, source = "google", filename = "Mapa.jpg",extent = "device") +
+  geom_point(data = df.localidades.con.coord, aes(x = lon, y = lat), color = 'red', size = 3)
+
+map.plot.con.localidades
+#########################################################################################################################################################################
+
+```
+
